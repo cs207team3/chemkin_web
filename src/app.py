@@ -25,7 +25,7 @@ app.secret_key = "super secret key"
 UPLOAD_FOLDER = '/uploaded_files/'
 ALLOWED_EXTENSIONS = set(['xml', 'txt'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+app.config["CACHE_TYPE"] = "null"
 
 @app.route('/')
 @app.route('/home')
