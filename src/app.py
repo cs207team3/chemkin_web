@@ -80,7 +80,7 @@ def upload_data():
                     species_dic[reaction_data['species'][i]] = rates[i]
             except ValueError as e:
                 print('Error occured:', e)
-                return render_template('test.html', data=reaction_data, error=e, scroll='hi')
+                return render_template('test.html', data=reaction_data, error=e.message, scroll='hi')
 
             return render_template('test.html', data=reaction_data, species_dic=species_dic, scroll='hi')
             # return redirect(request.url)
