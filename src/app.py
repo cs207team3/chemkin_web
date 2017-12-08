@@ -34,37 +34,6 @@ app.config["CACHE_TYPE"] = "null"
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-@app.route('/')
-@app.route('/home')
-def home():
-    return render_template('test.html')
-
-# @app.before_request
-# def limit_acess():
-#     global access_counter
-#     if access_counter == 0:
-#         print("Hi connect")
-#         access_counter += 1
-#     else:
-#         abort(403)
-
-# @socketio.on('connect')
-# def connect_user():
-#     global access_counter
-#     if access_counter == 0:
-#         print("Hi connect")
-#         access_counter = 1
-#     else:
-#         # abort(403)
-#         print("Can not go through")
-#         render_template('403.html')
-
-# @socketio.on('disconnect')
-# def disconnect_user():
-#     global access_counter
-#     access_counter = 0
-#     print('disconnected', access_counter)
-#     disconnect()
 
 #-------------------------------- Upload files -------------------------------------------#
 def allowed_file(filename):
@@ -74,14 +43,31 @@ def allowed_file(filename):
 reaction_data = {}
 system = {}
 
+@app.route('/')
+@app.route('/home')
+def home():
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    print('This is ip before_request:', request.headers.get('X-Forwarded-For', request.remote_addr), file=sys.stderr)
+    reaction_data[ip] = None
+    system[ip] = None
+    return render_template('test.html')
+
+# @app.before_request
+# def limit_acess():
+#     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+#     print('This is ip before_request:', request.headers.get('X-Forwarded-For', request.remote_addr), file=sys.stderr)
+#     reaction_data[ip] = None
+#     system[ip] = None
+
+
 @app.route('/', methods = ['GET', 'POST'])
 def upload_data():
     # print(request.headers)
     print('This is ip:', request.headers.get('X-Forwarded-For', request.remote_addr), file=sys.stderr)
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-    if ip not in reaction_data:
-        reaction_data[ip] = None
-        system[ip] = None
+    # if ip not in reaction_data:
+    #     reaction_data[ip] = None
+    #     system[ip] = None
 
     if request.method == 'POST':
         # This is file upload
@@ -121,7 +107,7 @@ def upload_data():
                     species_dic[reaction_data[ip]['species'][i]] = rates[i]
             except ValueError as e:
                 print('Error occured:', e)
-                return render_template('test.html', data=reaction_data[ip], error=e.messsage, scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], error=str(e), scroll='hi')
 
             return render_template('test.html', data=reaction_data[ip], species_dic=species_dic, scroll='hi')
             # return redirect(request.url)
