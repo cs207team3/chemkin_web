@@ -23,7 +23,7 @@ def get_rates(system, T, concs):
 app = Flask(__name__)
 app.secret_key = "super secret key"
 UPLOAD_FOLDER = '/uploaded_files/'
-ALLOWED_EXTENSIONS = set(['xml', 'txt'])
+ALLOWED_EXTENSIONS = set(['xml'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config["CACHE_TYPE"] = "null"
 
