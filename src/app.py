@@ -71,13 +71,18 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-reaction_data = None
-system = None
+reaction_data = {}
+system = {}
 
 @app.route('/', methods = ['GET', 'POST'])
 def upload_data():
     # print(request.headers)
     print('This is ip:', request.headers.get('X-Forwarded-For', request.remote_addr), file=sys.stderr)
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if ip not in reaction_data:
+        reaction_data[ip] = None
+        system[ip] = None
+
     if request.method == 'POST':
         # This is file upload
         if request.files:
@@ -89,10 +94,10 @@ def upload_data():
                 file.save(secure_filename(file.filename))
                 flash(file.filename + ' uploaded Successfully!')
 
-                global reaction_data, system
-                reaction_data, system = get_data(file.filename)
-                print(reaction_data)
-                return render_template('test.html', data=reaction_data, scroll='hi')
+                # global reaction_data, system
+                reaction_data[ip], system[ip] = get_data(file.filename)
+                print(reaction_data[ip])
+                return render_template('test.html', data=reaction_data[ip], scroll='hi')
             else:
                 flash('Incorrect file format!')
                 return redirect(request.url)
@@ -103,22 +108,22 @@ def upload_data():
             concs = request.form['concs']
 
             if len(T) == 0:
-                return render_template('test.html', data=reaction_data, error='Temperature is required!', scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], error='Temperature is required!', scroll='hi')
             if len(concs) == 0:
-                return render_template('test.html', data=reaction_data, error='Concentration is required!', scroll='hi')
-            if reaction_data == None:
-                return render_template('test.html', data=reaction_data, error='No reaction system input yet!', scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], error='Concentration is required!', scroll='hi')
+            if reaction_data[ip] == None:
+                return render_template('test.html', data=reaction_data[ip], error='No reaction system input yet!', scroll='hi')
 
             try:
-                rates = get_rates(system, T, concs)
+                rates = get_rates(system[ip], T, concs)
                 species_dic = {}
                 for i in range(len(rates)):
-                    species_dic[reaction_data['species'][i]] = rates[i]
+                    species_dic[reaction_data[ip]['species'][i]] = rates[i]
             except ValueError as e:
                 print('Error occured:', e)
-                return render_template('test.html', data=reaction_data, error=e.messsage, scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], error=e.messsage, scroll='hi')
 
-            return render_template('test.html', data=reaction_data, species_dic=species_dic, scroll='hi')
+            return render_template('test.html', data=reaction_data[ip], species_dic=species_dic, scroll='hi')
             # return redirect(request.url)
             # return render_template('base.html', t_concs = [T, concs])
 
