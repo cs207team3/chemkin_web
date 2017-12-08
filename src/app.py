@@ -1,6 +1,6 @@
 from flask import Flask, flash, render_template, abort, request, redirect, url_for, send_from_directory
 from werkzeug import secure_filename
-from flask_socketio import SocketIO, disconnect
+# from flask_socketio import SocketIO, disconnect
 import chem3
 from chem3.chemkin import *
 import os
@@ -28,7 +28,7 @@ app.secret_key = "super secret key"
 UPLOAD_FOLDER = '/uploaded_files/'
 ALLOWED_EXTENSIONS = set(['xml'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-socketio = SocketIO(app)
+# socketio = SocketIO(app)
 app.config["CACHE_TYPE"] = "null"
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
