@@ -23,6 +23,31 @@
     <link href="{{ url_for('static', filename='css/grayscale.min.css') }}" rel="stylesheet">
 
 </head>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // socket.connect();
+</script>
+
+<script type="text/javascript">
+	window.onbeforeunload = function (event) {
+		// var message = 'Important: Please click on \'Save\' button to leave this page.';
+	 //    if (typeof event == 'undefined') {
+	 //        event = window.event;
+	 //    }
+	 //    if (event) {
+	 //        event.returnValue = message;
+	 //    }
+
+	    console.log('disconnect');
+	    socket.disconnect();
+	    // socket.on('connect', function() {
+	    // 	socket.emit('disconnect', {data: 'I\'m disconnected!'});
+	    // });
+
+	    return null;
+	};
+</script>
 
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">

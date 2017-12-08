@@ -1,9 +1,12 @@
 from flask import Flask, flash, render_template, abort, request, redirect, url_for, send_from_directory
 from werkzeug import secure_filename
+from flask_socketio import SocketIO, disconnect
 import chem3
 from chem3.chemkin import *
 import os
+from werkzeug.contrib.fixers import ProxyFix
  
+access_counter = 0
 
 def get_data(filename):
     system = ReactionSystem(filename=filename)
@@ -25,12 +28,42 @@ app.secret_key = "super secret key"
 UPLOAD_FOLDER = '/uploaded_files/'
 ALLOWED_EXTENSIONS = set(['xml'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+socketio = SocketIO(app)
 app.config["CACHE_TYPE"] = "null"
+
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 @app.route('/')
 @app.route('/home')
 def home():
     return render_template('test.html')
+
+# @app.before_request
+# def limit_acess():
+#     global access_counter
+#     if access_counter == 0:
+#         print("Hi connect")
+#         access_counter += 1
+#     else:
+#         abort(403)
+
+# @socketio.on('connect')
+# def connect_user():
+#     global access_counter
+#     if access_counter == 0:
+#         print("Hi connect")
+#         access_counter = 1
+#     else:
+#         # abort(403)
+#         print("Can not go through")
+#         render_template('403.html')
+
+# @socketio.on('disconnect')
+# def disconnect_user():
+#     global access_counter
+#     access_counter = 0
+#     print('disconnected', access_counter)
+#     disconnect()
 
 #-------------------------------- Upload files -------------------------------------------#
 def allowed_file(filename):
@@ -42,6 +75,8 @@ system = None
 
 @app.route('/', methods = ['GET', 'POST'])
 def upload_data():
+    print(request.headers)
+    print('This is ip:', request.headers.get('X-Forwarded-For', request.remote_addr))
     if request.method == 'POST':
         # This is file upload
         if request.files:
@@ -80,7 +115,7 @@ def upload_data():
                     species_dic[reaction_data['species'][i]] = rates[i]
             except ValueError as e:
                 print('Error occured:', e)
-                return render_template('test.html', data=reaction_data, error=e.message, scroll='hi')
+                return render_template('test.html', data=reaction_data, error=e.messsage, scroll='hi')
 
             return render_template('test.html', data=reaction_data, species_dic=species_dic, scroll='hi')
             # return redirect(request.url)
@@ -88,4 +123,5 @@ def upload_data():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    # app.run(host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
