@@ -75,8 +75,8 @@ system = None
 
 @app.route('/', methods = ['GET', 'POST'])
 def upload_data():
-    print(request.headers)
-    print('This is ip:', request.headers.get('X-Forwarded-For', request.remote_addr))
+    # print(request.headers)
+    print('This is ip:', request.headers.get('X-Forwarded-For', request.remote_addr), file=sys.stderr)
     if request.method == 'POST':
         # This is file upload
         if request.files:
