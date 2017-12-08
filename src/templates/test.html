@@ -69,6 +69,12 @@
     </header>
 
     <!-- About Section -->
+    {% if error %}
+		<script>
+			alert("{{ error }}");
+		</script>
+	{% endif %}
+
     <div id="about" class="content-section text-left">
     	<div id="hi" class="container" style="color: black">
     		<br><br><br>

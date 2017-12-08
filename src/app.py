@@ -66,11 +66,20 @@ def upload_data():
             T = request.form['temp']
             concs = request.form['concs']
 
-            rates = get_rates(system, T, concs)
+            if len(T) == 0:
+                return render_template('test.html', data=reaction_data, error='Temperature is required!', scroll='hi')
+            if len(concs) == 0:
+                return render_template('test.html', data=reaction_data, error='Concentration is required!', scroll='hi')
 
-            species_dic = {}
-            for i in range(len(rates)):
-                species_dic[reaction_data['species'][i]] = rates[i]
+            try:
+                rates = get_rates(system, T, concs)
+                species_dic = {}
+                for i in range(len(rates)):
+                    species_dic[reaction_data['species'][i]] = rates[i]
+            except ValueError as e:
+                print('Error occured:', e)
+                return render_template('test.html', data=reaction_data, error=e, scroll='hi')
+
             return render_template('test.html', data=reaction_data, species_dic=species_dic, scroll='hi')
             # return redirect(request.url)
             # return render_template('base.html', t_concs = [T, concs])
