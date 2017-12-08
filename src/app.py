@@ -4,6 +4,7 @@ from werkzeug import secure_filename
 import chem3
 from chem3.chemkin import *
 import os
+import sys
 from werkzeug.contrib.fixers import ProxyFix
  
 access_counter = 0
