@@ -70,6 +70,8 @@ def upload_data():
                 return render_template('test.html', data=reaction_data, error='Temperature is required!', scroll='hi')
             if len(concs) == 0:
                 return render_template('test.html', data=reaction_data, error='Concentration is required!', scroll='hi')
+            if reaction_data == None:
+                return render_template('test.html', data=reaction_data, error='No reaction system input yet!', scroll='hi')
 
             try:
                 rates = get_rates(system, T, concs)
