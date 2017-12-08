@@ -98,13 +98,13 @@
 		        <div class="col col-md-6">
 
 		            <form method="POST">
-		                <label>Temperature:</label><input name="temp" placeholder=" example - 500"/><br>
+		                <label>Temperature:</label><input name="temp" placeholder=" example: 500"/><br>
 		                {% if data %}
 		                <p>
 		                    You must input {{ data['species']|length }} concentrations in the same order as the system species:
-		                    <br>{{ data['species'] }}.</p>
+		                    <br>{{ ', '.join(data['species']) }}.</p>
 		                {% endif %}
-		                <label>Concentrations:</label><input name="concs" placeholder=" example - 0.5, 1, 2.0"/>
+		                <label>Concentrations:</label><input name="concs" placeholder=" example: 0.5, 1, 2.0"/>
 		                <br><br>
 		                <input type="submit" class="btn btn-default" value="Calculate"/>
 		            </form>
@@ -118,7 +118,7 @@
 		            
 		           	<table class="table table-condensed">
 		                <tbody>
-		                	<th scope="row"> System Species: </th>
+		                	<th scope="row"> Species: </th>
 			                {% if data %}
 				                {% for eq in data['species'] %}
 									<td scope="row">{{ eq }}</td>
@@ -139,7 +139,7 @@
 		                <tbody>
 		                {% if data %}
 		                {% for eq in data['equations'] %}
-		                <tr><td>{{ eq }}</td></tr>
+		                <tr><td>{{ eq.replace('[', '<').replace(']', '>') }}</td></tr>
 		                {% endfor %}
 		                {% endif %}
 		                </tbody>
