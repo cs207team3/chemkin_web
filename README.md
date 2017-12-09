@@ -1,5 +1,5 @@
-# Test
+# Chemkin Webapp
 
-## Welcome to GitHub Pages
+This repository is for the webapp implentation of our checmical kinetics python library found [here](https://github.com/cs207team3/cs207-FinalProject).
 
-[This page](http://chemkin.pythonanywhere.com/) will be the web app of our chemkin demo.
+The webapp is hosted [here](http://chemkin.pythonanywhere.com/).
