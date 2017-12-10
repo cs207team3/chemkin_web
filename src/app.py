@@ -80,7 +80,7 @@ def upload_data():
                 return redirect(request.url)
             if allowed_file(file.filename):
                 file.save(secure_filename(file.filename))
-                flash(file.filename + ' uploaded Successfully!')
+                # flash(file.filename + ' uploaded Successfully!')
 
                 # global reaction_data, system
                 reaction_data[ip], system[ip] = get_data(file.filename)
@@ -88,8 +88,9 @@ def upload_data():
                 print(reaction_data[ip])
                 return render_template('test.html', data=reaction_data[ip], filename=upload_filename[ip], scroll='hi')
             else:
-                flash('Incorrect file format!')
-                return redirect(request.url)
+                # flash('Incorrect file format!')
+                # return redirect(request.url)
+                return render_template('test.html', data=reaction_data[ip], filename=upload_filename[ip], error='Incorrect file format!', scroll='hi')
 
         # This is form upload of T and concs
         if request.form:
