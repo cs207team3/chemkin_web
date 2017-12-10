@@ -403,6 +403,10 @@ class ReactionSystem():
 
 		if any(c < 0 for c in concs):
 			raise ValueError('Concentration should not be Negative!')
+
+		if T <=0:
+			raise ValueError('Temperature should be positive!')
+			
 		self.concs = concs
 
 		rates = self.progress_rate(T)
