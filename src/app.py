@@ -42,6 +42,7 @@ def allowed_file(filename):
 
 reaction_data = {}
 system = {}
+upload_filename = {}
 
 @app.route('/')
 @app.route('/home')
@@ -50,6 +51,7 @@ def home():
     print('This is ip before_request:', request.headers.get('X-Forwarded-For', request.remote_addr), file=sys.stderr)
     reaction_data[ip] = None
     system[ip] = None
+    upload_filename[ip] = None
     return render_template('test.html')
 
 # @app.before_request
@@ -82,8 +84,9 @@ def upload_data():
 
                 # global reaction_data, system
                 reaction_data[ip], system[ip] = get_data(file.filename)
+                upload_filename[ip] = file.filename
                 print(reaction_data[ip])
-                return render_template('test.html', data=reaction_data[ip], scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], filename=upload_filename[ip], scroll='hi')
             else:
                 flash('Incorrect file format!')
                 return redirect(request.url)
@@ -94,11 +97,11 @@ def upload_data():
             concs = request.form['concs']
 
             if len(T) == 0:
-                return render_template('test.html', data=reaction_data[ip], error='Temperature is required!', scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], filename=upload_filename[ip], error='Temperature is required!', scroll='hi')
             if len(concs) == 0:
-                return render_template('test.html', data=reaction_data[ip], error='Concentration is required!', scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], filename=upload_filename[ip], error='Concentration is required!', scroll='hi')
             if reaction_data[ip] == None:
-                return render_template('test.html', data=reaction_data[ip], error='No reaction system input yet!', scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], filename=upload_filename[ip], error='No reaction system input yet!', scroll='hi')
 
             try:
                 rates = get_rates(system[ip], T, concs)
@@ -107,9 +110,9 @@ def upload_data():
                     species_dic[reaction_data[ip]['species'][i]] = rates[i]
             except ValueError as e:
                 print('Error occured:', e)
-                return render_template('test.html', data=reaction_data[ip], error=str(e), scroll='hi')
+                return render_template('test.html', data=reaction_data[ip], filename=upload_filename[ip], error=str(e), scroll='hi')
 
-            return render_template('test.html', data=reaction_data[ip], species_dic=species_dic, scroll='hi')
+            return render_template('test.html', data=reaction_data[ip], species_dic=species_dic, filename=upload_filename[ip], scroll='hi')
             # return redirect(request.url)
             # return render_template('base.html', t_concs = [T, concs])
 
