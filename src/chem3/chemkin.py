@@ -309,7 +309,7 @@ class ReactionSystem():
 
 	def __len__(self):
 		"""Returns the number of reactions in the system"""
-		return len(self.ks)
+		return len(self.reactions)
 
 	def init_matrices(self, reactions):
 		"""Initializes reactant and product matrices for progress rate calculations
